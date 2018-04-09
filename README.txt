@@ -1,10 +1,8 @@
-﻿Projet multimodule avec Maven
+Projet multimodule avec Maven
 
-I) créer parent
+I) créer parent ('quickstart')
 
-
---> créer projet 'quickstart' puis renommer le packaging en 'pom'
-
+Editer informations Maven sur pom.xml: renommer le packaging <packaging>jar</packaging> en <packaging>pom</packaging>
 
 II) créer les modules
 
@@ -51,22 +49,82 @@ Rajouter repertoire java dans src/main, creer package,
  pb sur projets individuels mais pas sur multimodule...
 
 
+VII) compiler  / Tester / 
+
+Click droit sur root du projet parent + Run as> Java Application (si projet 'quickstart')
+ou
+
+ERREURS COMMUNS possibles:
+-ERREUR de compilation
+
+
+VIII) Packager / livrer
+Click droit sur root du projet parent + Run as> 4 Maven build 
+Introduire dans le champ 'Goals': clean install package + Run
+
+ERREURS COMMUNS possibles:
+-ERREUR: aucun attribut manifest principal 
 
 
 
-VII) compiler  / Tester / packager / livrer
+Resolution ERREURS COMMUNNES
 
-Lancer serveur sur module presentation
-
-Maven
-Goal: clean install package
-
-
-Erreur compilation:
-Try:
-Sur "pom" parent, rajouter le compilateur suivant dans <properties>
+<!-- ===== ERREUR de compilation ===== -->
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.1:compile (default-compile) on project monProjetQuickstart: Compilation failure: Compilation failure:
+[ERROR] Source option 1.5 is no longer supported. Use 1.6 or later.
+[ERROR] Target option 1.5 is no longer supported. Use 1.6 or later.
+------------------------------------------------------
+Solution: 
+Editer les proprietes de pom.xml parent et rajouter le compilateur 1.6
+------------------------------------------------------
+<properties>
+...
 	<maven.compiler.source>1.6</maven.compiler.source>
 	<maven.compiler.target>1.6</maven.compiler.target>
+</properties>
+<!-- =====================================-->
+
+<!-- ===== ERREUR: aucun attribut manifest principal ==== -->
+------------------------------------------------------
+Solution: 
+Editer la section build de pom.xml (parent?) pour rajouter le manifest
+------------------------------------------------------
+<!-- =====  Build ===== -->
+    <build>
+        <!-- Gestion des plugins (version) -->
+        <pluginManagement>
+            <plugins>
+                <!-- Plugin responsable de la génération du fichier JAR -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <!-- Création du Manifest pour la définition de la classe Main -->
+                        <manifest>
+                            <mainClass>home.melomanab.monProjetQuickstart.App</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+<!-- =====================================-->
+
+
+....
+
+
+
+
 
 Erreur page jstl: 
 Try: eliminer la mention provided sur dependence jsp
